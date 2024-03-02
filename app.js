@@ -47,5 +47,5 @@ weatherForm.addEventListener('submit',(e)=>{
 
 })
 
-//initial fetch
+//initial fetch 
 fetchWeather('miami')
