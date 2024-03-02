@@ -1,0 +1,21 @@
+.container{
+    display: flex;
+    align-items: center;
+    justify-content: center ;
+    flex-direction: column;
+
+}
+.weather{
+    margin: 30px;
+}
+
+.city-input{
+    border: none;
+    outline: none;
+    border-bottom: 1px solid black;
+    margin-right: 20px;
+    text-align: center;
+}
+button{
+    cursor: pointer;
+}

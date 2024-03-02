@@ -1,123 +1,51 @@
-//so we are creating a backend for todos
-//get todo will just show all the todos in json format
-//post todo will post them ,, take inputs from body
-//delete todo will delete them from the array for that we have used TWO functions
+const weatherDisplay= document.querySelector(".weather");
+const weatherForm=document.querySelector("#weather-form");
+const cityInput=document.querySelector(".city-input");
 
+//fetching weather from api
 
-// writing to json file use json.stringify(nameofthething)
-//reading from json file use json.parse(data)
+const fetchWeather=async (city)=>{
+const url=`https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=17c5384ae34261be43af6ef992cbf360
+`
 
+const res=await fetch(url)
+const data=await res.json()
 
-const express = require('express')
-const bodyParser= require('body-parser')
-const app = express()
-const port = 4000
-const fs=require('fs')
-const cors=require('cors')
-app.use(cors())
-app.use(bodyParser.json())
+if(data.cod==404){
+    alert("city not found")
+    return 
+}
+if(data.cod==401){
+    alert("invalid api key")
+    return;
+}
 
-let todos=[]
-//loading data from json file
+const displayData={
+    city:data.name,
+    temp:data.main.temp
+}
+addWeatherToDom(displayData)
+}
 
+const addWeatherToDom =(data)=>{
+    weatherDisplay.innerHTML=`
+    <h1>weather in ${data.city}</h1>
+    <h2>${data.temp} K</h2>
+    `
+    cityInput.value=""
+}
 
-// function loadTodosFromFile(){
-//   try{
-//     fs.readFileSync('app.json','utf8')
-//     return JSON.parse(data)||[]
-//   }
-//   catch(err){
-//     return []
-//   }
-// }
+//event listener for form submission
 
-// function saveTodoToFile(){
-//   fs.writeFileSync('app.json', JSON.stringify(todos),'utf8')
-// }
-
-
-//^^^^ function which are used to read and write fro a json file mocking a database
-
-
-
-//functions
-function findIndex(arr,id){
-  for(i=0;i<arr.length;i++){
-    if(arr[i].id===id){
-      return i
+weatherForm.addEventListener('submit',(e)=>{
+    e.preventDefault()
+    if(cityInput.value===""){
+        alert("enter a city")
+    }else{
+        fetchWeather(cityInput.value)
     }
-  }
-  return -1
-}
 
-function removeAtIndex(arr,index){
-let newarray=[]
-for(i=0;i<arr.length;i++){
-  if(i!==index){
-    newarray.push(arr[i])
-  }
-
-}
-return newarray;
-
-
-}
-
-//
-
-//getting the todos
-app.get('/todos', (req, res) => {
-  fs.readFile("app.json", "utf8", (err,data)=>{
-    if(err){
-      return []
-    }
-    res.json(JSON.parse(data))
-  })
 })
 
-count =1 
-//posting the todos
-app.post('/todos', (req,res)=>{
-  let newTodo={
-    id: count, //unique random id
-    title : req.body.title,
-    description : req.body.description
-  }
-  count=count+1
-  fs.readFile("app.json", "utf8", (err, data) => {
-    if (err) throw err;
-    let todos = JSON.parse(data);
-    todos.push(newTodo);
-    fs.writeFile("app.json", JSON.stringify(todos), (err) => {
-      if (err) throw err;
-      res.status(201).json(newTodo);
-    });
-  });
-});
-
-//deleting the todos
-app.delete('/todos/:id',(req,res)=>{
-  fs.readFile("app.json", "utf8", (err, data) => {
-    if (err) throw err;
-    let todos = JSON.parse(data);
-    let todoIndex = findIndex(todos, parseInt(req.params.id));
-    if (todoIndex === -1) {
-      res.status(404).send();
-    } else {
-      todos = removeAtIndex(todos, todoIndex);
-      fs.writeFile("app.json", JSON.stringify(todos), (err) => {
-        if (err) throw err;
-        res.status(200).send();
-      });
-    }
-  });
-});
-
-
-
-
-
-
-app.listen(port, () => {
-  console.log(`Example app listening on port ${port}`)
-})
+//initial fetch
+fetchWeather('miami')
