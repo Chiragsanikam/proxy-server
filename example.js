@@ -3,13 +3,15 @@ const cors = require('cors')
 const app = express()
 require('dotenv').config()
 const port = 5000
+const bodyParser= require('body-parser')
 
 app.use(cors())
+app.use(bodyParser.json())
 const API_KEY_VALUE=process.env.API_KEY_VALUE
 
-app.get('/weather', async (req,res)=>{
+app.post('/weather', async (req,res)=>{
      try{
-        city = req.body.city;
+        const city = req.body.city;
         if(!city){
             res.json({error:"city is missing"})
         }

@@ -1,6 +1,8 @@
 const weatherDisplay= document.querySelector(".weather");
 const weatherForm=document.querySelector("#weather-form");
 const cityInput=document.querySelector(".city-input");
+const API_KEY_VALUE=process.env.API_KEY_VALUE
+
 
 //fetching weather from api
 

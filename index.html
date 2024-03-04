@@ -9,11 +9,41 @@
 <body>
     <div class="container">
         <div class="weather">weather data will come here</div>
-        <form id="weather-form">
+       
             <input type="text" class="city-input" id="city-input" placeholder="enter a city">
-            <button type="submit">Submit</button>
-        </form>
+            <button class="submitBtn">Submit</button>
+        
     </div>
-    <script src="app.js"></script>
+    <script>
+           const weatherDisplay= document.querySelector(".weather");
+            const weatherForm=document.querySelector("#weather-form");
+            const cityInput=document.querySelector(".city-input");
+            const submitBtn= document.querySelector(".submitBtn")
+            
+
+
+
+submitBtn.addEventListener('click', ()=>{
+    let sendObj={
+        method:"POST",
+        body:JSON.stringify({
+            city: cityInput.value
+        }),
+        headers:{
+            'Content-Type': 'application/json'
+        }
+    }
+
+    fetch(`http://localhost:5000/weather`, sendObj).then((res)=>{res.json().then((result)=>{
+    weatherDisplay.innerHTML=`
+    <h1>weather in ${result.cityName}</h1>
+    <h2>${result.temperature} K</h2>
+    `
+    })})
+})
+
+
+
+    </script>
 </body>
 </html>
