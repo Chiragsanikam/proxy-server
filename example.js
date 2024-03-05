@@ -1,15 +1,31 @@
 const express = require('express')
 const cors = require('cors')
 const app = express()
+const rateLimit=  require('express-rate-limit')
+const apicache= require('apicache')
 require('dotenv').config()
 const port = 5000
 const bodyParser= require('body-parser')
+
+
 
 app.use(cors())
 app.use(bodyParser.json())
 const API_KEY_VALUE=process.env.API_KEY_VALUE
 
-app.post('/weather', async (req,res)=>{
+//init cache
+let cache= apicache.middleware
+
+//rate limiting
+const limiter = rateLimit({
+  windowMs: 10*60*100, //10 minutes
+  limit: 3, //10 requests in 10 minutes each IP
+})
+app.use(limiter)
+app.set('trust proxy', 1)
+
+
+app.post('/weather',cache('2 minutes'), async (req,res)=>{
      try{
         const city = req.body.city;
         if(!city){
